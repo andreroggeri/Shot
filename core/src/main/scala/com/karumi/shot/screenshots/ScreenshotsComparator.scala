@@ -39,14 +39,14 @@ class ScreenshotsComparator {
   private def imagesAreDifferent(screenshot: Screenshot,
                                  oldScreenshot: Image,
                                  newScreenshot: Image,
-                                 tolerance: Double) = {
+                                 tolerance: Double): Boolean = {
     if (oldScreenshot == newScreenshot) {
       false
     } else {
-      val oldScreenshotPixels = oldScreenshot.pixels
-      val newScreenshotPixels = newScreenshot.pixels
-      val differentPixels =
-        oldScreenshotPixels.diff(newScreenshotPixels).length
+      val oldScreenshotPixels = oldScreenshot.pixels.map(Some(_))
+      val newScreenshotPixels = newScreenshot.pixels.map(Some(_))
+
+      val differentPixels             = oldScreenshotPixels.zipAll(newScreenshotPixels, None, None).length
       val percentageOfDifferentPixels = differentPixels.toDouble / oldScreenshotPixels.length.toDouble
       val percentageOutOf100          = percentageOfDifferentPixels * 100.0
       val imagesAreDifferent          = percentageOutOf100 >= tolerance
